@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contador de Sushi</title>
+<meta name="description" content="Contá cuántas piezas de sushi come cada uno y quién gana. Con historial, récords y nombres editables.">
+<meta name="theme-color" content="#ff7a5a" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#c9533f" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Contador de Sushi">
+<meta property="og:description" content="¿Quién come más sushi? Contá pieza por pieza.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sushi">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: barra de sushi kawaii — cabecera tipo noren en salmón/gari, cinta ume, platos tintados por jugador, cuenta en tamago */
+:root {
+  /* paleta del sushi */
+  --salmon: #ff7350;  --gari: #ff7fa2;  --wasabi: #3fae6e;  --tamago: #ffc23d;  --ume: #8d3f78;  --nori: #26313a;
+
+  --bg: #fff3ee;  --bg-2: #f7eeff;
+  --surface: #ffffff;
+  --ink: #2c2238;  --muted: #806f86;  --line: #f4dcd6;
+
+  --a: #ff6a45;  --a-deep: #e04e2a;  --a-soft: #ffe1d6;  --a-tint: #fff1eb;
+  --b: #33a866;  --b-deep: #1f8a4f;  --b-soft: #d5f2df;  --b-tint: #effaf2;
+  --tam-soft: #fff1c9;  --ume-soft: #f6e3f0;  --ume-ink: #8d3f78;
+  --hero-1: #ff7a5a;  --hero-2: #ff6f9c;  --hero-ink: #ffffff;
+  --belt: #6e3460;  --belt-edge: #4d2143;
+  --wood: #e9b77f;  --wood-d: #c48a52;
+  --on-c: #ffffff;
+  --shadow: 0 2px 4px rgba(120,40,60,.05), 0 16px 36px -14px rgba(160,60,70,.28);
+
+  --f-display: "Mochiy Pop One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "M PLUS Rounded 1c", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1220; --bg-2: #141329; --surface: #251a2e; --ink: #fbf0f4; --muted: #b6a3bd; --line: #3a2a45;
+    --a: #ff8a68; --a-deep: #ffa286; --a-soft: #4a2630; --a-tint: #2e1d27;
+    --b: #5fd08f; --b-deep: #7fdca5; --b-soft: #1d3d2c; --b-tint: #1c2826;
+    --tam-soft: #3d3220; --ume-soft: #3a2240; --ume-ink: #eaa8d8;
+    --hero-1: #c9533f; --hero-2: #b23f6f; --hero-ink: #fff6f2;
+    --belt: #3d1937; --belt-edge: #240d20; --wood: #a5734a; --wood-d: #74502f;
+    --on-c: #1d1424;
+    --shadow: 0 2px 4px rgba(0,0,0,.3), 0 16px 36px -14px rgba(0,0,0,.7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1220; --bg-2: #141329; --surface: #251a2e; --ink: #fbf0f4; --muted: #b6a3bd; --line: #3a2a45;
+  --a: #ff8a68; --a-deep: #ffa286; --a-soft: #4a2630; --a-tint: #2e1d27;
+  --b: #5fd08f; --b-deep: #7fdca5; --b-soft: #1d3d2c; --b-tint: #1c2826;
+  --tam-soft: #3d3220; --ume-soft: #3a2240; --ume-ink: #eaa8d8;
+  --hero-1: #c9533f; --hero-2: #b23f6f; --hero-ink: #fff6f2;
+  --belt: #3d1937; --belt-edge: #240d20; --wood: #a5734a; --wood-d: #74502f;
+  --on-c: #1d1424;
+  --shadow: 0 2px 4px rgba(0,0,0,.3), 0 16px 36px -14px rgba(0,0,0,.7);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background-color: var(--bg);
+  background-image: linear-gradient(180deg, var(--bg) 0%, var(--bg) 35%, var(--bg-2) 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  -webkit-tap-highlight-color: transparent; overflow-x: hidden;
+}
+button { font: inherit; color: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap {
+  max-width: 720px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Cabecera noren ---------- */
+.top {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: var(--hero-1); color: var(--hero-ink);
+  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.top::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(115deg, transparent 10%, color-mix(in srgb, var(--hero-2) 88%, transparent) 75%);
+}
+.waves { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; }
+.petals { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.petal {
+  position: absolute; top: -14px; width: 11px; height: 9px;
+  background: #ffd3df; border-radius: 9px 1px 9px 1px; opacity: .85;
+  animation: petal linear infinite;
+}
+@keyframes petal {
+  0% { transform: translate(0, 0) rotate(0); }
+  50% { transform: translate(-18px, 70px) rotate(160deg); }
+  100% { transform: translate(10px, 150px) rotate(320deg); opacity: 0; }
+}
+header.wrap { padding-block: 22px 20px; display: flex; align-items: center; gap: 14px; }
+.hanko {
+  flex: none; width: 56px; height: 56px; border-radius: 15px;
+  background: #fff; color: #d63a3a;
+  display: grid; place-items: center; transform: rotate(-6deg);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; font-weight: 700;
+  font-size: 19px; line-height: 1; text-align: center;
+  box-shadow: inset 0 0 0 3px #d63a3a, inset 0 0 0 5px #fff, 0 6px 14px -6px rgba(80,0,20,.5);
+}
+.ttl { flex: 1; min-width: 0; }
+.ttl small { display: block; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+.ttl h1 {
+  margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(1.45rem, 5.8vw, 2.05rem);
+  line-height: 1.15; text-wrap: balance; text-shadow: 0 2px 0 rgba(120,20,40,.18);
+}
+.ttl h1 .vs {
+  display: inline-block; font-size: .5em; vertical-align: .3em; margin: 0 .45em;
+  background: var(--tamago); color: #5b3a00; border-radius: 99px; padding: .1em .55em; text-shadow: none;
+}
+.icon-btn {
+  flex: none; width: 44px; height: 44px; border-radius: 50%; border: 0;
+  background: rgba(255,255,255,.22); color: var(--hero-ink); display: grid; place-items: center; cursor: pointer;
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4);
+}
+.icon-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.icon-btn svg { width: 20px; height: 20px; }
+
+/* ---------- Cinta giratoria (kaiten) ---------- */
+.belt {
+  position: relative; height: 74px; overflow: hidden; background: var(--belt);
+  border-top: 5px solid var(--belt-edge); border-bottom: 5px solid var(--belt-edge);
+}
+.belt::before, .belt::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 3px; z-index: 1;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 18px, transparent 18px 30px);
+}
+.belt::before { top: 6px; } .belt::after { bottom: 6px; }
+.belt-track {
+  position: absolute; left: 0; top: 0; height: 100%;
+  display: flex; align-items: center; gap: 22px; padding-left: 22px;
+  width: max-content; animation: kaiten 40s linear infinite;
+}
+@keyframes kaiten { to { transform: translateX(-50%); } }
+.dish { flex: none; width: 70px; height: 58px; position: relative; }
+.dish .plate-e {
+  position: absolute; left: 3px; right: 3px; bottom: 4px; height: 20px; border-radius: 50%;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,.18), 0 0 0 2px rgba(255,255,255,.25);
+}
+.dish svg { position: absolute; left: 7px; bottom: 9px; width: 56px; height: 42px; }
+
+/* ---------- Contenido ---------- */
+main.wrap { padding-block: 20px 56px; display: flex; flex-direction: column; gap: 20px; }
+
+.status {
+  display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; color: var(--ume-ink);
+  background: var(--ume-soft); border-radius: 99px; padding: 5px 12px 5px 10px; align-self: flex-start;
+}
+.status i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status[data-s="live"] { color: var(--b-deep); background: var(--b-soft); }
+.status[data-s="live"] i { animation: beat 2s ease-in-out infinite; }
+.status[data-s="warn"] { color: var(--a-deep); background: var(--a-soft); }
+@keyframes beat { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, currentColor 22%, transparent); } }
+
+/* Cuerda: quién va ganando */
+.duel {
+  background: var(--surface); border-radius: 26px; padding: 16px 18px 16px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.duel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.duel-head .lead { font-family: var(--f-display); font-size: clamp(1.05rem, 4.2vw, 1.3rem); line-height: 1.25; text-wrap: balance; }
+.duel-head .lead .ca { color: var(--a-deep); } .duel-head .lead .cb { color: var(--b-deep); }
+.duel-head .tot {
+  font-size: 12.5px; font-weight: 800; color: #6b4a00; white-space: nowrap;
+  background: var(--tamago); border-radius: 99px; padding: 3px 12px;
+}
+.duel-head .tot b { font-family: var(--f-display); font-weight: 400; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.rope {
+  position: relative; height: 18px; border-radius: 99px; overflow: hidden;
+  background: linear-gradient(90deg, var(--b) , color-mix(in srgb, var(--b) 70%, #c8f06a));
+}
+.rope .fa {
+  position: absolute; inset: 0 auto 0 0; width: 50%;
+  background: linear-gradient(90deg, var(--gari), var(--a));
+  border-radius: 99px 0 0 99px; transition: width .45s cubic-bezier(.3,1.4,.5,1);
+}
+.rope::after {
+  content: ""; position: absolute; inset: 3px 8px auto; height: 4px; border-radius: 99px; background: rgba(255,255,255,.35);
+}
+.rope .mid { position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; background: var(--surface); opacity: .95; z-index: 1; }
+.rope-l { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 800; }
+.rope-l .ca { color: var(--a-deep); } .rope-l .cb { color: var(--b-deep); }
+
+/* Jugadores */
+.players { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.card {
+  --c: var(--a); --deep: var(--a-deep); --soft: var(--a-soft); --tint: var(--a-tint);
+  position: relative; min-width: 0;
+  background: linear-gradient(180deg, var(--soft) 0%, var(--tint) 45%, var(--surface) 100%);
+  border-radius: 30px; padding: 16px 12px 16px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  border: 2px solid transparent; transition: border-color .3s ease;
+}
+.card.b { --c: var(--b); --deep: var(--b-deep); --soft: var(--b-soft); --tint: var(--b-tint); }
+.card.winning { border-color: var(--c); }
+.crown {
+  position: absolute; top: -16px; left: 50%; width: 40px; height: 28px; margin-left: -20px;
+  transform-origin: 50% 100%; animation: crownIn .45s cubic-bezier(.3,1.6,.5,1);
+  filter: drop-shadow(0 3px 3px rgba(150,90,0,.3));
+}
+@keyframes crownIn { from { transform: scale(0) rotate(-20deg); } }
+.pname {
+  appearance: none; border: 0; cursor: pointer; padding: 5px 12px 5px 14px; border-radius: 99px;
+  background: var(--c); color: var(--on-c);
+  display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
+  font-family: var(--f-display); font-size: clamp(1rem, 4.4vw, 1.25rem);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 65%, #000);
+}
+.pname span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pname svg { flex: none; width: 13px; height: 13px; opacity: .8; }
+.pname:focus-visible { outline: 3px solid var(--deep); outline-offset: 2px; }
+.name-in {
+  width: 100%; max-width: 170px; text-align: center; font-family: var(--f-display); font-size: 1.1rem;
+  color: var(--deep); background: var(--surface); border: 2.5px solid var(--c); border-radius: 99px; padding: 5px 10px; outline: none;
+}
+
+.eat {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer;
+  width: 100%; max-width: 190px; position: relative; margin-top: 4px;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+}
+.eat:focus-visible { outline: 3px solid var(--c); outline-offset: 4px; border-radius: 24px; }
+.eat svg { display: block; width: 100%; height: auto; overflow: visible; }
+.eat .piece { transform-box: fill-box; transform-origin: 50% 100%; }
+.eat.hop .piece { animation: squish .42s cubic-bezier(.3,1.5,.5,1); }
+@keyframes squish {
+  0% { transform: scale(1,1); }
+  25% { transform: scale(1.12,.84); }
+  55% { transform: translateY(-14%) scale(.94,1.08); }
+  100% { transform: none; }
+}
+.eat .eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.6s infinite; }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+.plus-fx {
+  position: absolute; top: 4%; left: 50%; pointer-events: none;
+  font-family: var(--f-display); font-size: 1.6rem; color: var(--c);
+  text-shadow: 0 2px 0 var(--surface), 0 0 10px var(--surface);
+  animation: rise .75s ease-out forwards;
+}
+@keyframes rise { from { transform: translate(-50%, 0) scale(.6); opacity: 1; } to { transform: translate(-50%, -46px) scale(1.15); opacity: 0; } }
+
+.count {
+  font-family: var(--f-display); font-size: clamp(3rem, 15vw, 4.4rem); line-height: 1; color: var(--deep);
+  font-variant-numeric: tabular-nums; margin-top: -2px;
+}
+.count-l { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); opacity: .65; margin-top: -4px; }
+
+.ctrls { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 6px; width: 100%; margin-top: 8px; }
+.btn {
+  appearance: none; cursor: pointer; border-radius: 15px; padding: 10px 6px;
+  border: 0; background: var(--surface); color: var(--ink);
+  font-weight: 800; font-size: 15px; line-height: 1.1;
+  touch-action: manipulation; transition: transform .1s ease, box-shadow .1s ease;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 3px 0 var(--line);
+}
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.btn:disabled { opacity: .4; cursor: default; transform: none; }
+.ctrls .btn { box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 30%, var(--line)); }
+.btn.soft { background: var(--soft); color: var(--deep); }
+.btn.main { background: var(--c); color: var(--on-c); box-shadow: 0 4px 0 color-mix(in srgb, var(--c) 60%, #000); }
+.btn.main:active { box-shadow: 0 1px 0 color-mix(in srgb, var(--c) 60%, #000); transform: translateY(3px); }
+
+/* Tabla de madera (geta) */
+.geta { width: 100%; margin-top: 12px; position: relative; padding-bottom: 8px; }
+.geta-board {
+  position: relative; min-height: 54px; border-radius: 12px; padding: 8px 8px 10px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 22px, rgba(0,0,0,.045) 22px 23px, transparent 23px 41px, rgba(255,255,255,.08) 41px 42px),
+    linear-gradient(180deg, var(--wood), color-mix(in srgb, var(--wood) 80%, var(--wood-d)));
+  box-shadow: inset 0 -4px 0 var(--wood-d), 0 6px 10px -6px rgba(0,0,0,.35);
+  display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 2px 3px;
+}
+.geta::before, .geta::after {
+  content: ""; position: absolute; bottom: 0; width: 18%; height: 12px; background: var(--wood-d); border-radius: 0 0 4px 4px;
+}
+.geta::before { left: 14%; } .geta::after { right: 14%; }
+.mini { width: 30px; height: 23px; flex: none; }
+.mini.drop { animation: drop .45s cubic-bezier(.3,1.5,.5,1); }
+@keyframes drop { from { transform: translateY(-26px) scale(.4); opacity: 0; } }
+.geta .empty { font-size: 12px; font-weight: 800; color: #6b4526; opacity: .8; }
+.geta .extra {
+  font-family: var(--f-display); font-size: 13px; color: #3a2516;
+  background: rgba(255,255,255,.65); border-radius: 99px; padding: 1px 8px; align-self: center;
+}
+
+/* Terminar ronda */
+.round {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: var(--tam-soft); border-radius: 24px; padding: 16px 18px;
+}
+.round p { margin: 0; flex: 1 1 220px; min-width: 0; color: var(--ink); font-size: 14px; opacity: .85; }
+.round p b { font-family: var(--f-display); font-weight: 400; }
+.round .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn.ink { background: var(--ume); color: #fff; padding: 12px 18px; box-shadow: 0 4px 0 color-mix(in srgb, var(--ume) 60%, #000); }
+.btn.red { background: var(--a); color: var(--on-c); padding: 12px 18px; box-shadow: 0 4px 0 color-mix(in srgb, var(--a) 60%, #000); }
+.btn.ghost { padding: 12px 14px; }
+
+/* Historial */
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 1.35rem; margin: 0; text-wrap: balance; }
+h2 span { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--gari) 45%, transparent) 58% 92%, transparent 92%); padding: 0 4px; }
+.hist-sec { display: flex; flex-direction: column; gap: 12px; }
+.hist-sec .sub { margin: -6px 0 0; color: var(--muted); font-size: 13px; }
+.board { background: var(--surface); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); }
+.board table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; table-layout: fixed; }
+.board th, .board td { padding: 10px 12px; text-align: center; }
+.board thead th { font-family: var(--f-display); font-weight: 400; font-size: 1rem; }
+.board thead th:first-child { text-align: left; background: var(--surface); }
+.board thead th.ca { background: var(--a-soft); color: var(--a-deep); }
+.board thead th.cb { background: var(--b-soft); color: var(--b-deep); }
+.board tbody th { text-align: left; font-weight: 800; color: var(--muted); font-size: 13px; }
+.board tbody td { font-family: var(--f-display); font-size: 1.15rem; }
+.board tbody td:nth-child(2) { background: var(--a-tint); }
+.board tbody td:nth-child(3) { background: var(--b-tint); }
+.board tbody tr + tr > * { border-top: 1px solid var(--line); }
+.board td.top span { display: inline-block; padding: 0 11px; border-radius: 99px; color: var(--on-c); }
+.board td.top.ca span { background: var(--a); }
+.board td.top.cb span { background: var(--b); }
+
+.hist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hist li {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px;
+  background: var(--surface); border-radius: 20px; padding: 10px 14px; box-shadow: 0 1px 0 var(--line);
+}
+.hist .badge { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; }
+.hist .badge.ca { background: var(--a-soft); } .hist .badge.cb { background: var(--b-soft); }
+.hist .badge.tie { background: var(--tam-soft); }
+.hist .badge svg { width: 32px; height: 24px; }
+.hist .when { font-weight: 800; font-size: 14px; line-height: 1.3; }
+.hist .who { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.hist .info { min-width: 0; }
+.hist .res { font-family: var(--f-display); font-size: 1.25rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hist .res .ca { color: var(--a-deep); } .hist .res .cb { color: var(--b-deep); } .hist .res .sep { color: var(--muted); padding: 0 3px; }
+.hist li.hist-empty {
+  text-align: center; color: var(--muted); font-size: 14px; padding: 22px 16px; box-shadow: none;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border: 2px dashed var(--line); display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.hist-empty svg { width: 64px; height: 48px; }
+
+footer { text-align: center; font-size: 12.5px; color: var(--muted); }
+
+/* Toast + confeti */
+.toast {
+  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+  transform: translate(-50%, 24px); opacity: 0; pointer-events: none;
+  background: var(--ume); color: #fff; padding: 12px 20px; border-radius: 18px;
+  font-weight: 800; font-size: 14px; max-width: calc(100% - 32px); text-align: center;
+  box-shadow: 0 10px 30px -10px rgba(80,20,60,.6);
+  transition: transform .3s cubic-bezier(.3,1.4,.5,1), opacity .25s ease;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 25; overflow: hidden; }
+.confetti svg { position: absolute; top: -40px; width: 34px; height: 26px; animation: fall linear forwards; }
+.confetti .petal { top: -20px; animation-name: fall; }
+@keyframes fall { to { transform: translate(var(--dx), 110vh) rotate(var(--r)); } }
+
+@media (max-width: 480px) {
+  .players { gap: 10px; }
+  .card { padding: 14px 8px 14px; border-radius: 26px; }
+  .ctrls { gap: 5px; }
+  .btn { padding: 9px 4px; font-size: 14px; }
+  .mini { width: 25px; height: 19px; }
+  .board th, .board td { padding: 9px 8px; }
+  .hanko { width: 50px; height: 50px; font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .belt-track, .eat .eyes, .status i, .petal { animation: none; }
+  .petals { display: none; }
+  .eat.hop .piece, .mini.drop, .crown { animation: none; }
+  .plus-fx, .confetti { display: none; }
+  .rope .fa, .toast, .card { transition: none; }
+}
+</style>
+
+</head>
+<body>
+<!-- Ilustraciones reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="s-salmon" viewBox="0 0 120 90">
+      <path d="M20 58C20 44 36 40 60 40s40 4 40 18-16 18-40 18-40-4-40-18Z" fill="#fffaf2" stroke="#eadfce" stroke-width="2"/>
+      <path d="M12 47c2-16 26-22 50-22s46 6 46 20c0 10-10 10-22 8-16-2-38-2-56 2-12 3-19 0-18-8Z" fill="#ff8256"/>
+      <g stroke="#ffd4c1" stroke-width="4" stroke-linecap="round" fill="none" opacity=".9">
+        <path d="M33 30c4 8 3 15-1 21"/><path d="M51 27c4 9 3 17-1 23"/><path d="M69 27c4 9 3 17-1 23"/><path d="M87 30c4 8 3 14-1 20"/>
+      </g>
+      <ellipse cx="38" cy="32" rx="9" ry="2.6" fill="#fff" opacity=".45"/>
+    </symbol>
+    <symbol id="s-maki" viewBox="0 0 120 90">
+      <path d="M24 38v24a36 14 0 0 0 72 0V38Z" fill="#2b3640"/>
+      <ellipse cx="60" cy="38" rx="36" ry="14" fill="#3a4652"/>
+      <ellipse cx="60" cy="38" rx="31" ry="11.5" fill="#fffaf2"/>
+      <ellipse cx="51" cy="37" rx="9" ry="5" fill="#8cc152"/>
+      <ellipse cx="68" cy="39.5" rx="8.5" ry="5" fill="#ff8256"/>
+      <ellipse cx="60" cy="33" rx="5" ry="3" fill="#ffd45c"/>
+      <path d="M30 52c6 4 14 6 22 6" stroke="#fff" stroke-opacity=".12" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="s-tamago" viewBox="0 0 120 90">
+      <path d="M20 58C20 44 36 40 60 40s40 4 40 18-16 18-40 18-40-4-40-18Z" fill="#fffaf2" stroke="#eadfce" stroke-width="2"/>
+      <path d="M14 34c0-6 6-9 46-9s46 3 46 9v12c0 6-6 8-46 8s-46-2-46-8Z" fill="#ffd257"/>
+      <path d="M14 38c10 3 82 3 92 0" stroke="#f3b53b" stroke-width="2.5" fill="none"/>
+      <rect x="53" y="22" width="15" height="54" rx="3" fill="#2b3640"/>
+    </symbol>
+    <symbol id="s-maguro" viewBox="0 0 120 90">
+      <path d="M20 58C20 44 36 40 60 40s40 4 40 18-16 18-40 18-40-4-40-18Z" fill="#fffaf2" stroke="#eadfce" stroke-width="2"/>
+      <path d="M12 47c2-16 26-22 50-22s46 6 46 20c0 10-10 10-22 8-16-2-38-2-56 2-12 3-19 0-18-8Z" fill="#e2445c"/>
+      <ellipse cx="38" cy="32" rx="9" ry="2.6" fill="#fff" opacity=".4"/>
+    </symbol>
+    <symbol id="s-crown" viewBox="0 0 38 26">
+      <path d="M3 22 1 6l10 7 8-12 8 12 10-7-2 16Z" fill="#ffc93c" stroke="#e09a12" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="19" cy="15" r="2.6" fill="#e0443a"/>
+    </symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24">
+      <path d="M4 20h4L19 9l-4-4L4 16Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="top">
+  <svg class="waves" aria-hidden="true" preserveAspectRatio="none">
+    <defs>
+      <pattern id="seig" width="48" height="24" patternUnits="userSpaceOnUse">
+        <g style="fill:var(--hero-1);stroke:rgba(255,255,255,.2)" stroke-width="2">
+          <g transform="translate(24 0)"><circle r="24"/><circle r="17"/><circle r="10"/><circle r="3"/></g>
+          <g transform="translate(0 12)"><circle r="24"/><circle r="17"/><circle r="10"/><circle r="3"/></g>
+          <g transform="translate(48 12)"><circle r="24"/><circle r="17"/><circle r="10"/><circle r="3"/></g>
+          <g transform="translate(24 24)"><circle r="24"/><circle r="17"/><circle r="10"/><circle r="3"/></g>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#seig)"/>
+  </svg>
+  <div class="petals" id="petals" aria-hidden="true"></div>
+  <header class="wrap">
+    <div class="hanko" aria-hidden="true">寿司</div>
+    <div class="ttl">
+      <small>Noche de sushi</small>
+      <h1><span class="na" data-name="chanti">Chanti</span><span class="vs">vs</span><span class="nb" data-name="more">More</span></h1>
+    </div>
+    <button class="icon-btn" id="soundBtn" aria-label="Sonido activado" aria-pressed="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 9v6h4l5 4V5L8 9Z" fill="currentColor" stroke="none"/>
+        <path id="snd-on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>
+        <path id="snd-off" d="M17 9l5 6M22 9l-5 6" hidden/>
+      </svg>
+    </button>
+  </header>
+</div>
+
+<div class="belt" aria-hidden="true"><div class="belt-track" id="belt"></div></div>
+
+<main class="wrap">
+  <span class="status" id="status" data-s="wait"><i></i><span id="statusTxt">Conectando…</span></span>
+
+  <section class="duel" aria-live="polite">
+    <div class="duel-head">
+      <div class="lead" id="leadTxt">¡Itadakimasu! Arranquen a comer</div>
+      <div class="tot"><b id="total">0</b> piezas en la mesa</div>
+    </div>
+    <div class="rope" aria-hidden="true"><div class="fa" id="ropeA"></div><div class="mid"></div></div>
+    <div class="rope-l"><span class="ca" data-name="chanti">Chanti</span><span class="cb" data-name="more">More</span></div>
+  </section>
+
+  <div class="players">
+    <article class="card a" id="card-chanti">
+      <svg class="crown" id="crown-chanti" hidden aria-hidden="true"><use href="#s-crown"/></svg>
+      <button class="pname" id="name-chanti" aria-label="Cambiar nombre"><span data-name="chanti">Chanti</span><svg aria-hidden="true"><use href="#i-pencil"/></svg></button>
+      <button class="eat" id="eat-chanti" aria-label="Sumar una pieza">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <ellipse cx="60" cy="85" rx="56" ry="14" style="fill:var(--c)" opacity=".35"/>
+          <ellipse cx="60" cy="82" rx="56" ry="14" style="fill:var(--surface)"/>
+          <ellipse cx="60" cy="82" rx="50" ry="11.5" fill="none" style="stroke:var(--c)" stroke-width="2.5" opacity=".7"/>
+          <ellipse cx="60" cy="83" rx="40" ry="8" fill="rgba(0,0,0,.08)"/>
+          <g class="piece">
+            <use href="#s-salmon" x="0" y="8" width="120" height="90"/>
+            <g class="eyes"><ellipse cx="48" cy="69" rx="3.2" ry="3.8" fill="#2a2238"/><ellipse cx="72" cy="69" rx="3.2" ry="3.8" fill="#2a2238"/>
+              <circle cx="49.2" cy="67.6" r="1.1" fill="#fff"/><circle cx="73.2" cy="67.6" r="1.1" fill="#fff"/></g>
+            <ellipse cx="39" cy="74" rx="5" ry="2.6" fill="#ff9db0" opacity=".75"/><ellipse cx="81" cy="74" rx="5" ry="2.6" fill="#ff9db0" opacity=".75"/>
+            <path d="M56 73q4 4 8 0" stroke="#2a2238" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </button>
+      <div class="count" id="n-chanti">0</div>
+      <div class="count-l" id="l-chanti">piezas</div>
+      <div class="ctrls">
+        <button class="btn" id="minus-chanti" aria-label="Restar una pieza">−1</button>
+        <button class="btn soft" id="plus5-chanti" aria-label="Sumar cinco piezas">+5</button>
+        <button class="btn main" id="plus-chanti" aria-label="Sumar una pieza">+1</button>
+      </div>
+      <div class="geta"><div class="geta-board" id="geta-chanti"></div></div>
+    </article>
+
+    <article class="card b" id="card-more">
+      <svg class="crown" id="crown-more" hidden aria-hidden="true"><use href="#s-crown"/></svg>
+      <button class="pname" id="name-more" aria-label="Cambiar nombre"><span data-name="more">More</span><svg aria-hidden="true"><use href="#i-pencil"/></svg></button>
+      <button class="eat" id="eat-more" aria-label="Sumar una pieza">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <ellipse cx="60" cy="85" rx="56" ry="14" style="fill:var(--c)" opacity=".35"/>
+          <ellipse cx="60" cy="82" rx="56" ry="14" style="fill:var(--surface)"/>
+          <ellipse cx="60" cy="82" rx="50" ry="11.5" fill="none" style="stroke:var(--c)" stroke-width="2.5" opacity=".7"/>
+          <ellipse cx="60" cy="83" rx="40" ry="8" fill="rgba(0,0,0,.08)"/>
+          <g class="piece">
+            <use href="#s-maki" x="0" y="12" width="120" height="90"/>
+            <g class="eyes"><ellipse cx="48" cy="68" rx="3.2" ry="3.8" fill="#fff"/><ellipse cx="72" cy="68" rx="3.2" ry="3.8" fill="#fff"/></g>
+            <ellipse cx="39" cy="73" rx="5" ry="2.6" fill="#ff9db0" opacity=".8"/><ellipse cx="81" cy="73" rx="5" ry="2.6" fill="#ff9db0" opacity=".8"/>
+            <path d="M56 72q4 4 8 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </button>
+      <div class="count" id="n-more">0</div>
+      <div class="count-l" id="l-more">piezas</div>
+      <div class="ctrls">
+        <button class="btn" id="minus-more" aria-label="Restar una pieza">−1</button>
+        <button class="btn soft" id="plus5-more" aria-label="Sumar cinco piezas">+5</button>
+        <button class="btn main" id="plus-more" aria-label="Sumar una pieza">+1</button>
+      </div>
+      <div class="geta"><div class="geta-board" id="geta-more"></div></div>
+    </article>
+  </div>
+
+  <div class="round" id="round">
+    <p id="roundTxt">¿Ya no entra más nada? Guardá la ronda en el historial y los platos vuelven a cero.</p>
+    <div class="acts" id="roundActs"><button class="btn ink" id="endBtn">Terminar y guardar</button></div>
+  </div>
+
+  <section class="hist-sec">
+    <h2><span>La cuenta</span></h2>
+    <p class="sub">Todas las salidas que guardaron.</p>
+    <div class="board">
+      <table>
+        <thead><tr><th scope="col"><span class="sr">Dato</span></th><th scope="col" class="ca" data-name="chanti">Chanti</th><th scope="col" class="cb" data-name="more">More</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Victorias</th><td id="st-w-chanti">0</td><td id="st-w-more">0</td></tr>
+          <tr><th scope="row">Récord</th><td id="st-r-chanti">0</td><td id="st-r-more">0</td></tr>
+          <tr><th scope="row">Promedio</th><td id="st-p-chanti">0</td><td id="st-p-more">0</td></tr>
+          <tr><th scope="row">Total comido</th><td id="st-t-chanti">0</td><td id="st-t-more">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="hist" id="hist"></ul>
+  </section>
+
+  <footer id="foot">Tocá el sushi para sumar una pieza. Tocá un nombre para cambiarlo.</footer>
+</main>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  const P = ["chanti", "more"];
+  const DEFAULT_NAMES = { chanti: "Chanti", more: "More" };
+  const SYM = { chanti: "s-salmon", more: "s-maki" };
+  const LS_KEY = "sushi-chanti-more-v1";
+  const LS_SOUND = "sushi-sound";
+  const MAX_MINI = 20;
+  const $ = (id) => document.getElementById(id);
+  const SVGNS = "http://www.w3.org/2000/svg";
+
+  const state = { chanti: 0, more: 0, rounds: [], names: { ...DEFAULT_NAMES } };
+  let db = null, mode = "local";
+  const pending = { chanti: false, more: false }, writing = { chanti: false, more: false }, timers = {};
+  let shown = { chanti: -1, more: -1 };   // piezas ya dibujadas en la tabla
+
+  /* ---------- utilidades ---------- */
+  function useSvg(sym, cls) {
+    const s = document.createElementNS(SVGNS, "svg");
+    s.setAttribute("viewBox", "0 0 120 90");
+    if (cls) s.setAttribute("class", cls);
+    s.setAttribute("aria-hidden", "true");
+    const u = document.createElementNS(SVGNS, "use");
+    u.setAttribute("href", "#" + sym);
+    s.appendChild(u);
+    return s;
+  }
+  const nm = (p) => state.names[p] || DEFAULT_NAMES[p];
+  const piezas = (n) => (n === 1 ? "1 pieza" : n + " piezas");
+
+  /* ---------- cinta giratoria ---------- */
+  (function buildBelt() {
+    const order = ["s-salmon", "s-maki", "s-tamago", "s-maguro", "s-maki", "s-salmon", "s-tamago", "s-maguro", "s-salmon", "s-maki", "s-maguro", "s-tamago"];
+    const plates = ["#ffb39e", "#9be0b4", "#ffe08a", "#ffc2d4", "#ffffff", "#d4c4ff"];
+    const track = $("belt");
+    for (let k = 0; k < 2; k++) {
+      order.forEach((s, i) => {
+        const d = document.createElement("div"); d.className = "dish";
+        const pl = document.createElement("div"); pl.className = "plate-e"; pl.style.background = plates[i % plates.length];
+        d.append(pl, useSvg(s)); track.appendChild(d);
+      });
+    }
+  })();
+
+  (function petals() {
+    const box = $("petals");
+    for (let i = 0; i < 9; i++) {
+      const d = document.createElement("span"); d.className = "petal";
+      d.style.left = (6 + i * 11 + Math.random() * 6) + "%";
+      d.style.animationDuration = (6 + Math.random() * 5) + "s";
+      d.style.animationDelay = (-Math.random() * 10) + "s";
+      d.style.transform = "scale(" + (.7 + Math.random() * .6) + ")";
+      box.appendChild(d);
+    }
+  })();
+
+  /* ---------- guardado local ---------- */
+  function loadLocal() {
+    try {
+      const d = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+      if (!d) return;
+      P.forEach((p) => { if (typeof d[p] === "number") state[p] = d[p]; });
+      if (Array.isArray(d.rounds)) state.rounds = d.rounds;
+      if (d.names) P.forEach((p) => { if (typeof d.names[p] === "string" && d.names[p]) state.names[p] = d.names[p]; });
+    } catch (e) {}
+  }
+  function saveLocal() {
+    if (mode !== "local") return;
+    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  /* ---------- sonido ---------- */
+  let soundOn = true, actx = null;
+  try { soundOn = localStorage.getItem(LS_SOUND) !== "off"; } catch (e) {}
+  function paintSound() {
+    $("soundBtn").setAttribute("aria-pressed", String(soundOn));
+    $("soundBtn").setAttribute("aria-label", soundOn ? "Sonido activado" : "Sonido apagado");
+    $("snd-on").toggleAttribute("hidden", !soundOn);
+    $("snd-off").toggleAttribute("hidden", soundOn);
+  }
+  function blip(p, up) {
+    if (!soundOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+      const base = p === "chanti" ? 620 : 520;
+      o.type = "sine";
+      o.frequency.setValueAtTime(up ? base : base * .6, t);
+      o.frequency.exponentialRampToValueAtTime(up ? base * 1.7 : base * .4, t + .09);
+      g.gain.setValueAtTime(.0001, t);
+      g.gain.exponentialRampToValueAtTime(.18, t + .01);
+      g.gain.exponentialRampToValueAtTime(.0001, t + .16);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t + .18);
+    } catch (e) {}
+  }
+  $("soundBtn").addEventListener("click", () => {
+    soundOn = !soundOn; paintSound();
+    try { localStorage.setItem(LS_SOUND, soundOn ? "on" : "off"); } catch (e) {}
+  });
+
+  /* ---------- render ---------- */
+  function renderNames() {
+    document.querySelectorAll("[data-name]").forEach((el) => { el.textContent = nm(el.dataset.name); });
+    P.forEach((p) => {
+      $("name-" + p).setAttribute("aria-label", "Cambiar el nombre de " + nm(p));
+      $("eat-" + p).setAttribute("aria-label", "Sumar una pieza a " + nm(p));
+      $("plus-" + p).setAttribute("aria-label", "Sumar una pieza a " + nm(p));
+      $("plus5-" + p).setAttribute("aria-label", "Sumar cinco piezas a " + nm(p));
+      $("minus-" + p).setAttribute("aria-label", "Restar una pieza a " + nm(p));
+    });
+  }
+
+  function renderGeta(p) {
+    const el = $("geta-" + p), n = state[p], prev = shown[p];
+    shown[p] = n;
+    el.textContent = "";
+    if (n === 0) { const s = document.createElement("span"); s.className = "empty"; s.textContent = "Tabla vacía"; el.appendChild(s); return; }
+    const vis = Math.min(n, MAX_MINI);
+    for (let i = 0; i < vis; i++) {
+      const isNew = prev >= 0 && i >= Math.min(prev, MAX_MINI);
+      el.appendChild(useSvg(SYM[p], "mini" + (isNew ? " drop" : "")));
+    }
+    if (n > MAX_MINI) { const s = document.createElement("span"); s.className = "extra"; s.textContent = "+" + (n - MAX_MINI); el.appendChild(s); }
+  }
+
+  function render() {
+    const a = state.chanti, b = state.more, tot = a + b;
+    P.forEach((p) => {
+      $("n-" + p).textContent = state[p];
+      $("l-" + p).textContent = state[p] === 1 ? "pieza" : "piezas";
+      $("minus-" + p).disabled = state[p] === 0;
+      if (shown[p] !== state[p]) renderGeta(p);
+    });
+    $("total").textContent = tot;
+    $("ropeA").style.width = (tot === 0 ? 50 : Math.max(4, Math.min(96, (a / tot) * 100))) + "%";
+    const lead = a > b ? "chanti" : b > a ? "more" : null;
+    const lt = $("leadTxt"); lt.textContent = "";
+    if (tot === 0) lt.textContent = "¡Itadakimasu! Arranquen a comer";
+    else if (!lead) lt.textContent = "Empate, ¡a seguir comiendo!";
+    else {
+      const s = document.createElement("span"); s.className = lead === "chanti" ? "ca" : "cb"; s.textContent = nm(lead);
+      lt.append(s, document.createTextNode(" gana por " + piezas(Math.abs(a - b))));
+    }
+    P.forEach((p) => {
+      $("card-" + p).classList.toggle("winning", lead === p);
+      $("crown-" + p).toggleAttribute("hidden", lead !== p);
+    });
+    if (!confirming && $("endBtn")) $("endBtn").disabled = tot === 0;
+    renderHistory();
+  }
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    const day = d.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short" });
+    const t = d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+    return day.charAt(0).toUpperCase() + day.slice(1) + " · " + t;
+  }
+
+  function renderHistory() {
+    const rs = state.rounds.slice().sort((x, y) => (y.fecha || "").localeCompare(x.fecha || ""));
+    const st = { chanti: { w: 0, r: 0, t: 0 }, more: { w: 0, r: 0, t: 0 } };
+    rs.forEach((r) => {
+      const a = +r.chanti || 0, b = +r.more || 0;
+      if (a > b) st.chanti.w++; else if (b > a) st.more.w++;
+      st.chanti.r = Math.max(st.chanti.r, a); st.more.r = Math.max(st.more.r, b);
+      st.chanti.t += a; st.more.t += b;
+    });
+    const n = rs.length;
+    [["w", (p) => st[p].w], ["r", (p) => st[p].r], ["p", (p) => n ? Math.round((st[p].t / n) * 10) / 10 : 0], ["t", (p) => st[p].t]].forEach(([k, f]) => {
+      const va = f("chanti"), vb = f("more");
+      P.forEach((p) => {
+        const td = $("st-" + k + "-" + p), v = p === "chanti" ? va : vb, other = p === "chanti" ? vb : va;
+        td.className = v > other ? "top " + (p === "chanti" ? "ca" : "cb") : "";
+        td.textContent = "";
+        const s = document.createElement("span"); s.textContent = String(v).replace(".", ",");
+        td.appendChild(s);
+      });
+    });
+
+    const list = $("hist"); list.textContent = "";
+    if (!n) {
+      const li = document.createElement("li"); li.className = "hist-empty";
+      li.appendChild(useSvg("s-tamago"));
+      const t = document.createElement("span");
+      t.textContent = "Todavía no guardaron ninguna salida. Cuando terminen de comer, tocá “Terminar y guardar”.";
+      li.appendChild(t); list.appendChild(li); return;
+    }
+    rs.slice(0, 50).forEach((r) => {
+      const a = +r.chanti || 0, b = +r.more || 0;
+      const na = (r.nombres && r.nombres.chanti) || nm("chanti"), nb = (r.nombres && r.nombres.more) || nm("more");
+      const li = document.createElement("li");
+      const badge = document.createElement("div");
+      badge.className = "badge " + (a > b ? "ca" : b > a ? "cb" : "tie");
+      badge.appendChild(useSvg(a > b ? SYM.chanti : b > a ? SYM.more : "s-tamago"));
+      const info = document.createElement("div"); info.className = "info";
+      const w = document.createElement("div"); w.className = "when"; w.textContent = fmtDate(r.fecha);
+      const who = document.createElement("div"); who.className = "who";
+      who.textContent = (a === b ? "Empate" : "Ganó " + (a > b ? na : nb)) + " · " + piezas(a + b) + " entre los dos";
+      info.append(w, who);
+      const res = document.createElement("div"); res.className = "res";
+      const sa = document.createElement("span"); sa.className = "ca"; sa.textContent = a;
+      const sep = document.createElement("span"); sep.className = "sep"; sep.textContent = "–";
+      const sb = document.createElement("span"); sb.className = "cb"; sb.textContent = b;
+      res.append(sa, sep, sb);
+      li.append(badge, info, res); list.appendChild(li);
+    });
+  }
+
+  /* ---------- efectos ---------- */
+  let toastT;
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+  function fx(p, delta, remote) {
+    const eat = $("eat-" + p);
+    eat.classList.remove("hop"); void eat.offsetWidth; eat.classList.add("hop");
+    if (delta > 0) {
+      const f = document.createElement("span"); f.className = "plus-fx"; f.textContent = "+" + delta;
+      eat.appendChild(f); setTimeout(() => f.remove(), 800);
+    }
+    if (!remote) {
+      blip(p, delta > 0);
+      try { navigator.vibrate && navigator.vibrate(delta > 0 ? 12 : [8, 40, 8]); } catch (e) {}
+    }
+  }
+  function confetti(winner) {
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const box = $("confetti");
+    const syms = winner ? [SYM[winner], SYM[winner], "s-tamago", "s-maguro"] : ["s-salmon", "s-maki", "s-tamago", "s-maguro"];
+    for (let i = 0; i < 44; i++) {
+      let s;
+      if (i % 4 === 3) { s = document.createElement("span"); s.className = "petal"; }
+      else s = useSvg(syms[i % syms.length]);
+      s.style.left = Math.random() * 100 + "vw";
+      s.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+      s.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
+      s.style.animationDuration = (1.6 + Math.random() * 1.4) + "s";
+      s.style.animationDelay = (Math.random() * .5) + "s";
+      box.appendChild(s);
+    }
+    setTimeout(() => { box.textContent = ""; }, 3600);
+  }
+
+  /* ---------- sumar / restar ---------- */
+  function change(p, delta) {
+    const next = Math.max(0, state[p] + delta);
+    if (next === state[p]) return;
+    state[p] = next;
+    fx(p, delta);
+    render();
+    if (mode === "live") { pending[p] = true; scheduleWrite(p); } else saveLocal();
+  }
+  function scheduleWrite(p) { clearTimeout(timers[p]); timers[p] = setTimeout(() => flush(p), 250); }
+  async function flush(p) {
+    if (writing[p]) { scheduleWrite(p); return; }
+    writing[p] = true;
+    const value = state[p];
+    try {
+      await db.doc("marcador/" + p).set({ count: value, at: new Date().toISOString() });
+      if (state[p] === value) pending[p] = false;
+    } catch (e) {
+      if (e && e.code === "unavailable") { writing[p] = false; setTimeout(() => flush(p), 600 + Math.random() * 600); return; }
+      toast(e && e.code === "invalid_argument" ? "No tenés permiso para sumar acá. Pedí acceso de colaborador." : "No se pudo guardar. Revisá la conexión.");
+      pending[p] = false;
+    }
+    writing[p] = false;
+    if (pending[p]) scheduleWrite(p);
+  }
+
+  /* ---------- nombres ---------- */
+  function editName(p) {
+    const btn = $("name-" + p);
+    const inp = document.createElement("input");
+    inp.className = "name-in"; inp.id = "name-in-" + p; inp.maxLength = 14; inp.value = nm(p);
+    inp.setAttribute("aria-label", "Nombre"); inp.autocomplete = "off";
+    btn.hidden = true; btn.after(inp); inp.focus(); inp.select();
+    let done = false;
+    const finish = (save) => {
+      if (done) return; done = true;
+      const v = inp.value.trim().slice(0, 14);
+      inp.remove(); btn.hidden = false;
+      if (save && v && v !== nm(p)) {
+        state.names[p] = v; renderNames(); render();
+        if (mode === "live") db.doc("config/nombres").set({ ...state.names }).catch(() => toast("No se pudo guardar el nombre."));
+        else saveLocal();
+      }
+      btn.focus();
+    };
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter") finish(true); if (e.key === "Escape") finish(false); });
+    inp.addEventListener("blur", () => finish(true));
+  }
+
+  /* ---------- terminar ronda ---------- */
+  let confirming = false;
+  function showConfirm() {
+    confirming = true;
+    const t = $("roundTxt"); t.textContent = "";
+    const b = document.createElement("b"); b.textContent = "¿Guardar " + state.chanti + " – " + state.more + "?";
+    t.append(b, document.createTextNode(" Se anota en la cuenta y los platos vuelven a cero."));
+    const acts = $("roundActs"); acts.textContent = "";
+    const no = document.createElement("button"); no.className = "btn ghost"; no.id = "noBtn"; no.textContent = "Cancelar";
+    const yes = document.createElement("button"); yes.className = "btn red"; yes.id = "yesBtn"; yes.textContent = "Sí, guardar";
+    no.onclick = resetRoundUI; yes.onclick = endRound;
+    acts.append(no, yes); yes.focus();
+  }
+  function resetRoundUI() {
+    confirming = false;
+    $("roundTxt").textContent = "¿Ya no entra más nada? Guardá la ronda en el historial y los platos vuelven a cero.";
+    const acts = $("roundActs"); acts.textContent = "";
+    const b = document.createElement("button"); b.className = "btn ink"; b.id = "endBtn"; b.textContent = "Terminar y guardar";
+    b.onclick = showConfirm; b.disabled = state.chanti + state.more === 0; acts.appendChild(b);
+  }
+  async function endRound() {
+    const r = { chanti: state.chanti, more: state.more, fecha: new Date().toISOString(), nombres: { ...state.names } };
+    const winner = r.chanti > r.more ? "chanti" : r.more > r.chanti ? "more" : null;
+    if (mode === "live") {
+      try {
+        await db.collection("rondas").add(r);
+        P.forEach((p) => { state[p] = 0; pending[p] = true; });
+        render(); P.forEach(flush);
+      } catch (e) {
+        toast(e && e.code === "quota_exceeded" ? "La cuenta está llena." : "No se pudo guardar la ronda. Probá de nuevo.");
+        resetRoundUI(); return;
+      }
+    } else {
+      state.rounds.push(r); state.chanti = 0; state.more = 0; saveLocal(); render();
+    }
+    resetRoundUI();
+    confetti(winner);
+    toast((winner ? "¡Ganó " + nm(winner) + "!" : "¡Empate!") + " Quedó " + r.chanti + " – " + r.more);
+  }
+
+  /* ---------- eventos ---------- */
+  P.forEach((p) => {
+    $("eat-" + p).addEventListener("click", () => change(p, 1));
+    $("plus-" + p).addEventListener("click", () => change(p, 1));
+    $("plus5-" + p).addEventListener("click", () => change(p, 5));
+    $("minus-" + p).addEventListener("click", () => change(p, -1));
+    $("name-" + p).addEventListener("click", () => editName(p));
+  });
+  $("endBtn").onclick = showConfirm;
+
+  function setStatus(s, txt) { $("status").dataset.s = s; $("statusTxt").textContent = txt; }
+
+  /* ---------- arranque ---------- */
+  paintSound();
+  loadLocal();
+  renderNames();
+  render();
+
+  function goLocal() {
+    mode = "local";
+    setStatus("local", "Guardado en este dispositivo");
+  }
+
+  async function start() {
+    try { db = await window.claude.use("db"); } catch (e) { db = null; }
+    if (!db) { goLocal(); return; }
+    mode = "live";
+    state.chanti = 0; state.more = 0; state.rounds = []; state.names = { ...DEFAULT_NAMES };
+    renderNames(); render();
+    $("foot").textContent = "Se sincroniza en vivo: lo que suma uno lo ve el otro al instante. Tocá un nombre para cambiarlo.";
+
+    let fresh = false;
+    const t = setTimeout(() => { if (!fresh) setStatus("warn", "Sin señal, puede estar desactualizado"); }, 10000);
+    const ok = (snap) => { if (!fresh && !snap.metadata.fromCache) { fresh = true; clearTimeout(t); setStatus("live", "En vivo"); } };
+    const dead = () => { clearTimeout(t); setStatus("warn", "Se cortó la conexión. Recargá la página."); };
+
+    P.forEach((p) => {
+      db.doc("marcador/" + p).onSnapshot((snap) => {
+        ok(snap);
+        if (pending[p] || writing[p] || snap.metadata.hasPendingWrites) return;
+        const d = snap.exists ? snap.data() : null;
+        const v = d && typeof d.count === "number" ? d.count : 0;
+        if (v !== state[p]) { const delta = v - state[p]; state[p] = v; if (delta) fx(p, delta, true); render(); }
+      }, dead);
+    });
+    db.doc("config/nombres").onSnapshot((snap) => {
+      const d = snap.exists ? snap.data() : null;
+      if (!d) return;
+      P.forEach((p) => { if (typeof d[p] === "string" && d[p].trim()) state.names[p] = d[p].trim().slice(0, 14); });
+      renderNames(); render();
+    }, () => {});
+    db.collection("rondas").orderBy("fecha", "desc").limit(300).onSnapshot((qs) => {
+      state.rounds = qs.docs.map((d) => d.data()).filter(Boolean);
+      render();
+    }, () => {});
+  }
+  // Fuera de Claude (por ejemplo en GitHub Pages) no existe window.claude: arranca local al toque.
+  const hasClaude = () => !!(window.claude && typeof window.claude.use === "function");
+  if (hasClaude()) start();
+  else {
+    goLocal();
+    let tries = 0;
+    const iv = setInterval(() => { if (hasClaude()) { clearInterval(iv); start(); } else if (++tries > 15) clearInterval(iv); }, 150);
+  }
+})();
+</script>
+</body>
+</html>
