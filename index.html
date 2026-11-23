@@ -18,6 +18,8 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 
 <title>Sushi de Chanti y More</title>
+
+<title>Sushi de Chanti y More</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
@@ -38,6 +40,7 @@
   --belt: #6e3460;  --belt-edge: #4d2143;
   --wood: #e9b77f;  --wood-d: #c48a52;
   --on-c: #ffffff;
+  --plate: #ffffff;
   --shadow: 0 2px 4px rgba(120,40,60,.05), 0 16px 36px -14px rgba(160,60,70,.28);
 
   --f-display: "Mochiy Pop One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
@@ -52,6 +55,7 @@
     --hero-1: #c9533f; --hero-2: #b23f6f; --hero-ink: #fff6f2;
     --belt: #3d1937; --belt-edge: #240d20; --wood: #a5734a; --wood-d: #74502f;
     --on-c: #1d1424;
+    --plate: #4a3a58;
     --shadow: 0 2px 4px rgba(0,0,0,.3), 0 16px 36px -14px rgba(0,0,0,.7);
     color-scheme: dark;
   }
@@ -64,6 +68,7 @@
   --hero-1: #c9533f; --hero-2: #b23f6f; --hero-ink: #fff6f2;
   --belt: #3d1937; --belt-edge: #240d20; --wood: #a5734a; --wood-d: #74502f;
   --on-c: #1d1424;
+  --plate: #4a3a58;
   --shadow: 0 2px 4px rgba(0,0,0,.3), 0 16px 36px -14px rgba(0,0,0,.7);
   color-scheme: dark;
 }
@@ -109,7 +114,8 @@ button { font: inherit; color: inherit; }
   50% { transform: translate(-18px, 70px) rotate(160deg); }
   100% { transform: translate(10px, 150px) rotate(320deg); opacity: 0; }
 }
-header.wrap { padding-block: 22px 20px; display: flex; align-items: center; gap: 14px; }
+header.wrap { padding-block: 22px 20px; display: flex; align-items: center; gap: 10px; }
+header.wrap .hanko { margin-right: 4px; }
 .hanko {
   flex: none; width: 56px; height: 56px; border-radius: 15px;
   background: #fff; color: #d63a3a;
@@ -121,7 +127,7 @@ header.wrap { padding-block: 22px 20px; display: flex; align-items: center; gap:
 .ttl { flex: 1; min-width: 0; }
 .ttl small { display: block; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
 .ttl h1 {
-  margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(1.45rem, 5.8vw, 2.05rem);
+  margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(1.2rem, 5vw, 2.05rem);
   line-height: 1.15; text-wrap: balance; text-shadow: 0 2px 0 rgba(120,20,40,.18);
 }
 .ttl h1 .vs {
@@ -365,9 +371,9 @@ h2 span { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--
 .board tbody td:nth-child(2) { background: var(--a-tint); }
 .board tbody td:nth-child(3) { background: var(--b-tint); }
 .board tbody tr + tr > * { border-top: 1px solid var(--line); }
-.board td.top span { display: inline-block; padding: 0 11px; border-radius: 99px; color: var(--on-c); }
-.board td.top.ca span { background: var(--a); }
-.board td.top.cb span { background: var(--b); }
+.board td.best span { display: inline-block; padding: 0 11px; border-radius: 99px; color: var(--on-c); }
+.board td.best.ca span { background: var(--a); }
+.board td.best.cb span { background: var(--b); }
 
 .hist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .hist li {
@@ -560,6 +566,12 @@ body.in-mesa { overflow: hidden; }
       <small>Noche de sushi</small>
       <h1><span class="na" data-name="chanti">Chanti</span><span class="vs">vs</span><span class="nb" data-name="more">More</span></h1>
     </div>
+    <button class="icon-btn" id="themeBtn" aria-label="Cambiar a modo oscuro">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path id="ic-moon" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" fill="currentColor" stroke="none"/>
+        <g id="ic-sun" hidden><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5"/></g>
+      </svg>
+    </button>
     <button class="icon-btn" id="soundBtn" aria-label="Sonido activado" aria-pressed="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 9v6h4l5 4V5L8 9Z" fill="currentColor" stroke="none"/>
@@ -608,7 +620,7 @@ body.in-mesa { overflow: hidden; }
       <button class="eat" id="eat-chanti" aria-label="Sumar una pieza">
         <svg viewBox="0 0 120 100" aria-hidden="true">
           <ellipse cx="60" cy="85" rx="56" ry="14" style="fill:var(--c)" opacity=".35"/>
-          <ellipse cx="60" cy="82" rx="56" ry="14" style="fill:var(--surface)"/>
+          <ellipse cx="60" cy="82" rx="56" ry="14" style="fill:var(--plate)"/>
           <ellipse cx="60" cy="82" rx="50" ry="11.5" fill="none" style="stroke:var(--c)" stroke-width="2.5" opacity=".7"/>
           <ellipse cx="60" cy="83" rx="40" ry="8" fill="rgba(0,0,0,.08)"/>
           <g class="piece">
@@ -636,7 +648,7 @@ body.in-mesa { overflow: hidden; }
       <button class="eat" id="eat-more" aria-label="Sumar una pieza">
         <svg viewBox="0 0 120 100" aria-hidden="true">
           <ellipse cx="60" cy="85" rx="56" ry="14" style="fill:var(--c)" opacity=".35"/>
-          <ellipse cx="60" cy="82" rx="56" ry="14" style="fill:var(--surface)"/>
+          <ellipse cx="60" cy="82" rx="56" ry="14" style="fill:var(--plate)"/>
           <ellipse cx="60" cy="82" rx="50" ry="11.5" fill="none" style="stroke:var(--c)" stroke-width="2.5" opacity=".7"/>
           <ellipse cx="60" cy="83" rx="40" ry="8" fill="rgba(0,0,0,.08)"/>
           <g class="piece">
@@ -810,6 +822,32 @@ body.in-mesa { overflow: hidden; }
     try { localStorage.setItem(LS_SOUND, soundOn ? "on" : "off"); } catch (e) {}
   });
 
+  /* ---------- modo claro / oscuro ---------- */
+  const LS_THEME = "sushi-theme";
+  const HERO = { light: "#ff7a5a", dark: "#c9533f" };
+  const mq = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
+  function themeNow() {
+    const t = document.documentElement.getAttribute("data-theme");
+    return t === "dark" || t === "light" ? t : (mq && mq.matches ? "dark" : "light");
+  }
+  function paintTheme() {
+    const dark = themeNow() === "dark";
+    $("ic-moon").toggleAttribute("hidden", dark);
+    $("ic-sun").toggleAttribute("hidden", !dark);
+    $("themeBtn").setAttribute("aria-label", dark ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => { m.setAttribute("content", HERO[dark ? "dark" : "light"]); m.removeAttribute("media"); });
+  }
+  function setTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem(LS_THEME, t); } catch (e) {}
+    paintTheme();
+  }
+  try { const t = localStorage.getItem(LS_THEME); if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  $("themeBtn").addEventListener("click", () => setTheme(themeNow() === "dark" ? "light" : "dark"));
+  if (mq && mq.addEventListener) mq.addEventListener("change", paintTheme);
+  new MutationObserver(paintTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  paintTheme();
+
   /* ---------- render ---------- */
   function renderNames() {
     document.querySelectorAll("[data-name]").forEach((el) => { el.textContent = nm(el.dataset.name); });
@@ -877,7 +915,7 @@ body.in-mesa { overflow: hidden; }
     const d = new Date(iso);
     if (isNaN(d)) return "";
     const day = d.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "short" });
-    const t = d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+    const t = d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
     return day.charAt(0).toUpperCase() + day.slice(1) + " · " + t;
   }
 
@@ -895,7 +933,7 @@ body.in-mesa { overflow: hidden; }
       const va = f("chanti"), vb = f("more");
       P.forEach((p) => {
         const td = $("st-" + k + "-" + p), v = p === "chanti" ? va : vb, other = p === "chanti" ? vb : va;
-        td.className = v > other ? "top " + (p === "chanti" ? "ca" : "cb") : "";
+        td.className = v > other ? "best " + (p === "chanti" ? "ca" : "cb") : "";
         td.textContent = "";
         const s = document.createElement("span"); s.textContent = String(v).replace(".", ",");
         td.appendChild(s);

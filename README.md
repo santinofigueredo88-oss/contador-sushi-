@@ -10,6 +10,7 @@
 - **Tocá un nombre** para cambiarlo por el tuyo.
 - Arriba ves quién va ganando y por cuántas piezas.
 - Cuando terminen de comer, tocá **Terminar y guardar**: la ronda queda anotada en **La cuenta** con la fecha, y los platos vuelven a cero.
+- Con el botón de la **luna / sol** (arriba) cambiás entre modo claro y oscuro.
 - En **La cuenta** ves las victorias, el récord, el promedio y el total que comió cada uno.
 
 Todo queda guardado en tu celular: si cerrás la página, al volver siguen los números, los nombres y el historial.
