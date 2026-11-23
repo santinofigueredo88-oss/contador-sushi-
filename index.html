@@ -16,6 +16,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sushi">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+
+<title>Sushi de Chanti y More</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
@@ -263,7 +265,7 @@ main.wrap { padding-block: 20px 56px; display: flex; flex-direction: column; gap
 }
 .count-l { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); opacity: .65; margin-top: -4px; }
 
-.ctrls { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 6px; width: 100%; margin-top: 8px; }
+.ctrls { display: grid; grid-template-columns: 1fr; gap: 6px; width: 100%; margin-top: 8px; }
 .btn {
   appearance: none; cursor: pointer; border-radius: 15px; padding: 10px 6px;
   border: 0; background: var(--surface); color: var(--ink);
@@ -277,8 +279,39 @@ main.wrap { padding-block: 20px 56px; display: flex; flex-direction: column; gap
 .btn:disabled { opacity: .4; cursor: default; transform: none; }
 .ctrls .btn { box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 30%, var(--line)); }
 .btn.soft { background: var(--soft); color: var(--deep); }
-.btn.main { background: var(--c); color: var(--on-c); box-shadow: 0 4px 0 color-mix(in srgb, var(--c) 60%, #000); }
+.btn.main { padding: 14px 8px; font-size: 17px; border-radius: 18px; background: var(--c); color: var(--on-c); box-shadow: 0 4px 0 color-mix(in srgb, var(--c) 60%, #000); }
 .btn.main:active { box-shadow: 0 1px 0 color-mix(in srgb, var(--c) 60%, #000); transform: translateY(3px); }
+
+.quitar {
+  appearance: none; border: 0; background: none; cursor: pointer; justify-self: center;
+  color: var(--deep); font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 99px; opacity: .75;
+  touch-action: manipulation;
+}
+.quitar:hover { opacity: 1; background: var(--soft); }
+.quitar:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+.quitar:disabled { opacity: .3; cursor: default; background: none; }
+
+/* Quién soy en este celular */
+.soy {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px 14px; flex-wrap: wrap;
+  background: var(--surface); border-radius: 22px; padding: 12px 16px; box-shadow: var(--shadow);
+}
+.soy-q { font-weight: 800; font-size: 15px; min-width: 0; }
+.soy-q b { font-family: var(--f-display); font-weight: 400; }
+.soy-q b.ca { color: var(--a-deep); } .soy-q b.cb { color: var(--b-deep); }
+.soy-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn.soy-a { background: var(--a); color: var(--on-c); padding: 10px 18px; font-family: var(--f-display); font-weight: 400; box-shadow: 0 3px 0 color-mix(in srgb, var(--a) 60%, #000); }
+.btn.soy-b { background: var(--b); color: var(--on-c); padding: 10px 18px; font-family: var(--f-display); font-weight: 400; box-shadow: 0 3px 0 color-mix(in srgb, var(--b) 60%, #000); }
+.soy-cambiar {
+  appearance: none; border: 0; background: var(--ume-soft); color: var(--ume-ink); cursor: pointer;
+  font-size: 13px; font-weight: 800; padding: 6px 14px; border-radius: 99px;
+}
+.soy-cambiar:focus-visible { outline: 3px solid var(--ume-ink); outline-offset: 2px; }
+.soy.elegir { box-shadow: 0 0 0 3px var(--tamago), var(--shadow); }
+.card.locked .ctrls { display: none; }
+.card.locked .eat { cursor: default; }
+.card.locked .eat:disabled { opacity: 1; }
+.card .solo { font-size: 12px; font-weight: 800; color: var(--deep); opacity: .6; margin-top: 8px; text-align: center; }
 
 /* Tabla de madera (geta) */
 .geta { width: 100%; margin-top: 12px; position: relative; padding-bottom: 8px; }
@@ -374,6 +407,76 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
 .confetti .petal { top: -20px; animation-name: fall; }
 @keyframes fall { to { transform: translate(var(--dx), 110vh) rotate(var(--r)); } }
 
+/* ---------- Modo mesa: un celu para los dos ---------- */
+.row-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.mesa-btn {
+  appearance: none; border: 0; cursor: pointer; border-radius: 99px; padding: 8px 14px 8px 10px;
+  background: var(--ume); color: #fff; font-weight: 800; font-size: 13.5px;
+  display: inline-flex; align-items: center; gap: 7px;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--ume) 60%, #000);
+}
+.mesa-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 color-mix(in srgb, var(--ume) 60%, #000); }
+.mesa-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.mesa-btn svg { width: 20px; height: 20px; }
+body.in-mesa { overflow: hidden; }
+.mesa {
+  position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; background: var(--bg);
+}
+.half {
+  --c: var(--a); --deep: var(--a-deep); --soft: var(--a-soft); --tint: var(--a-tint);
+  flex: 1 1 0; min-height: 0; position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2vh;
+  padding: 14px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(180deg, var(--tint) 0%, var(--soft) 100%);
+}
+.half.b {
+  --c: var(--b); --deep: var(--b-deep); --soft: var(--b-soft); --tint: var(--b-tint);
+  transform: rotate(180deg);
+  padding-bottom: calc(12px + env(safe-area-inset-top, 0px));
+}
+.half .h-head { display: flex; align-items: center; gap: 8px; }
+.half .h-name {
+  font-family: var(--f-display); font-size: 1.15rem; padding: 4px 14px; border-radius: 99px;
+  background: var(--c); color: var(--on-c); box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 65%, #000);
+  max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.half .h-crown { width: 34px; height: 24px; }
+.h-eat {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer; color: inherit;
+  flex: 1 1 auto; min-height: 0; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 4vw;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; position: relative;
+}
+.h-eat:focus-visible { outline: 3px solid var(--c); outline-offset: -6px; border-radius: 24px; }
+.h-eat > svg { height: min(24vh, 190px); width: auto; max-width: 46%; overflow: visible; }
+.h-eat .piece { transform-box: fill-box; transform-origin: 50% 100%; }
+.h-eat.hop .piece { animation: squish .42s cubic-bezier(.3,1.5,.5,1); }
+.h-eat .eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.6s infinite; }
+.h-num { display: flex; flex-direction: column; align-items: center; }
+.h-count { font-family: var(--f-display); font-size: min(15vh, 24vw); line-height: 1; color: var(--deep); font-variant-numeric: tabular-nums; }
+.h-tap { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--deep); opacity: .65; }
+.h-eat .plus-fx { top: 0; }
+.h-ctrls { display: flex; gap: 10px; }
+.h-ctrls .quitar { font-size: 15px; padding: 10px 18px; background: var(--surface); opacity: .9; }
+.h-ctrls .btn { min-width: 84px; padding: 12px 16px; font-size: 17px; box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 30%, var(--line)); }
+.mesa-mid {
+  flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+  padding: 8px max(12px, env(safe-area-inset-left, 0px)); background: var(--belt); color: #fff;
+  border-block: 4px solid var(--belt-edge);
+}
+.mesa-mid .btn { padding: 9px 12px; font-size: 13.5px; box-shadow: none; }
+.mesa-mid .btn.ex { background: rgba(255,255,255,.14); color: #fff; justify-self: start; }
+.mesa-mid .btn.fin { background: var(--tamago); color: #5b3a00; justify-self: end; }
+.mesa-mid .btn.fin.armed { background: var(--hanko, #e0443a); color: #fff; }
+.mm-score { font-family: var(--f-display); font-size: 1.45rem; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mm-score .ca { color: #ffb39e; } .mm-score .cb { color: #a6e8bf; } .mm-score .sep { opacity: .6; padding: 0 6px; }
+@media (max-height: 560px) {
+  .h-eat > svg { height: 20vh; }
+  .h-ctrls .btn { padding: 8px 12px; min-width: 64px; }
+}
+
+.btn.soy-both { background: var(--ume); color: #fff; padding: 10px 16px; font-family: var(--f-display); font-weight: 400; box-shadow: 0 3px 0 color-mix(in srgb, var(--ume) 60%, #000); }
+
 @media (max-width: 480px) {
   .players { gap: 10px; }
   .card { padding: 14px 8px 14px; border-radius: 26px; }
@@ -389,6 +492,7 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
   .eat.hop .piece, .mini.drop, .crown { animation: none; }
   .plus-fx, .confetti { display: none; }
   .rope .fa, .toast, .card { transition: none; }
+  .h-eat .eyes, .h-eat.hop .piece { animation: none; }
 }
 </style>
 
@@ -469,7 +573,24 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
 <div class="belt" aria-hidden="true"><div class="belt-track" id="belt"></div></div>
 
 <main class="wrap">
-  <span class="status" id="status" data-s="wait"><i></i><span id="statusTxt">Conectando…</span></span>
+  <div class="row-top">
+    <span class="status" id="status" data-s="wait"><i></i><span id="statusTxt">Conectando…</span></span>
+    <button class="mesa-btn" id="mesaBtn" aria-label="Modo mesa: un celular para los dos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M6 12h12"/><path d="M10 6.5h4M10 17.5h4"/>
+      </svg>Modo mesa
+    </button>
+  </div>
+
+  <div class="soy" id="soy">
+    <span class="soy-q" id="soyTxt">¿Quién sos en este celular?</span>
+    <div class="soy-btns" id="soyBtns">
+      <button class="btn soy-a" id="soy-chanti"><span data-name="chanti">Chanti</span></button>
+      <button class="btn soy-b" id="soy-more"><span data-name="more">More</span></button>
+      <button class="btn soy-both" id="soy-both">Los dos</button>
+    </div>
+    <button class="soy-cambiar" id="soyChange" hidden>Cambiar</button>
+  </div>
 
   <section class="duel" aria-live="polite">
     <div class="duel-head">
@@ -502,10 +623,10 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
       <div class="count" id="n-chanti">0</div>
       <div class="count-l" id="l-chanti">piezas</div>
       <div class="ctrls">
-        <button class="btn" id="minus-chanti" aria-label="Restar una pieza">−1</button>
-        <button class="btn soft" id="plus5-chanti" aria-label="Sumar cinco piezas">+5</button>
-        <button class="btn main" id="plus-chanti" aria-label="Sumar una pieza">+1</button>
+        <button class="btn main" id="plus-chanti" aria-label="Sumar una pieza">+1 sushi</button>
+        <button class="quitar" id="minus-chanti" aria-label="Quitar una pieza">− quitar uno</button>
       </div>
+      <div class="solo" id="solo-chanti" hidden></div>
       <div class="geta"><div class="geta-board" id="geta-chanti"></div></div>
     </article>
 
@@ -529,10 +650,10 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
       <div class="count" id="n-more">0</div>
       <div class="count-l" id="l-more">piezas</div>
       <div class="ctrls">
-        <button class="btn" id="minus-more" aria-label="Restar una pieza">−1</button>
-        <button class="btn soft" id="plus5-more" aria-label="Sumar cinco piezas">+5</button>
-        <button class="btn main" id="plus-more" aria-label="Sumar una pieza">+1</button>
+        <button class="btn main" id="plus-more" aria-label="Sumar una pieza">+1 sushi</button>
+        <button class="quitar" id="minus-more" aria-label="Quitar una pieza">− quitar uno</button>
       </div>
+      <div class="solo" id="solo-more" hidden></div>
       <div class="geta"><div class="geta-board" id="geta-more"></div></div>
     </article>
   </div>
@@ -559,8 +680,27 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
     <ul class="hist" id="hist"></ul>
   </section>
 
-  <footer id="foot">Tocá el sushi para sumar una pieza. Tocá un nombre para cambiarlo.</footer>
+  <footer id="foot">Cada uno elige quién es y suma solo su sushi. Tocá tu nombre para cambiarlo.</footer>
+  <footer>¿Un solo celu para los dos? Elegí <b>Los dos</b>, o tocá <b>Modo mesa</b>: lo apoyan en el medio y cada uno anota de su lado.</footer>
 </main>
+
+<div class="mesa" id="mesa" hidden role="dialog" aria-label="Modo mesa">
+  <section class="half b" id="half-more">
+    <div class="h-head"><span class="h-name" data-name="more">More</span><svg class="h-crown" id="hcrown-more" hidden aria-hidden="true"><use href="#s-crown"/></svg></div>
+    <button class="h-eat" id="heat-more" aria-label="Sumar una pieza"><span class="h-num"><span class="h-count" id="hn-more">0</span><span class="h-tap">Tocá +1</span></span></button>
+    <div class="h-ctrls"><button class="quitar" id="hminus-more">− quitar uno</button></div>
+  </section>
+  <div class="mesa-mid">
+    <button class="btn ex" id="mesaExit">Salir</button>
+    <div class="mm-score" aria-live="polite"><span class="ca" id="mm-chanti">0</span><span class="sep">–</span><span class="cb" id="mm-more">0</span></div>
+    <button class="btn fin" id="mesaEnd">Terminar</button>
+  </div>
+  <section class="half a" id="half-chanti">
+    <div class="h-head"><span class="h-name" data-name="chanti">Chanti</span><svg class="h-crown" id="hcrown-chanti" hidden aria-hidden="true"><use href="#s-crown"/></svg></div>
+    <button class="h-eat" id="heat-chanti" aria-label="Sumar una pieza"><span class="h-num"><span class="h-count" id="hn-chanti">0</span><span class="h-tap">Tocá +1</span></span></button>
+    <div class="h-ctrls"><button class="quitar" id="hminus-chanti">− quitar uno</button></div>
+  </section>
+</div>
 
 <div class="confetti" id="confetti" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status"></div>
@@ -572,6 +712,11 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
   const SYM = { chanti: "s-salmon", more: "s-maki" };
   const LS_KEY = "sushi-chanti-more-v1";
   const LS_SOUND = "sushi-sound";
+  const LS_ME = "sushi-soy";
+  let me = null;
+  try { const v = localStorage.getItem(LS_ME); if (P.includes(v) || v === "both") me = v; } catch (e) {}
+  let mesaOn = false;
+  const canEdit = (p) => mesaOn || me === "both" || me === p;
   const MAX_MINI = 20;
   const $ = (id) => document.getElementById(id);
   const SVGNS = "http://www.w3.org/2000/svg";
@@ -668,12 +813,12 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
   /* ---------- render ---------- */
   function renderNames() {
     document.querySelectorAll("[data-name]").forEach((el) => { el.textContent = nm(el.dataset.name); });
+    if (typeof renderMe === "function" && $("soyTxt")) try { renderMe(); } catch (e) {}
     P.forEach((p) => {
       $("name-" + p).setAttribute("aria-label", "Cambiar el nombre de " + nm(p));
       $("eat-" + p).setAttribute("aria-label", "Sumar una pieza a " + nm(p));
       $("plus-" + p).setAttribute("aria-label", "Sumar una pieza a " + nm(p));
-      $("plus5-" + p).setAttribute("aria-label", "Sumar cinco piezas a " + nm(p));
-      $("minus-" + p).setAttribute("aria-label", "Restar una pieza a " + nm(p));
+      $("minus-" + p).setAttribute("aria-label", "Quitar una pieza a " + nm(p));
     });
   }
 
@@ -695,7 +840,13 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
     P.forEach((p) => {
       $("n-" + p).textContent = state[p];
       $("l-" + p).textContent = state[p] === 1 ? "pieza" : "piezas";
-      $("minus-" + p).disabled = state[p] === 0;
+      $("minus-" + p).disabled = state[p] === 0 || !canEdit(p);
+      $("plus-" + p).disabled = !canEdit(p);
+      $("eat-" + p).disabled = !canEdit(p);
+      $("card-" + p).classList.toggle("locked", !canEdit(p));
+      const solo = $("solo-" + p);
+      solo.hidden = !me || canEdit(p);
+      solo.textContent = "Esto lo suma " + nm(p) + " desde su celular";
       if (shown[p] !== state[p]) renderGeta(p);
     });
     $("total").textContent = tot;
@@ -713,6 +864,12 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
       $("crown-" + p).toggleAttribute("hidden", lead !== p);
     });
     if (!confirming && $("endBtn")) $("endBtn").disabled = tot === 0;
+    P.forEach((p) => {
+      $("hn-" + p).textContent = state[p];
+      $("mm-" + p).textContent = state[p];
+      $("hminus-" + p).disabled = state[p] === 0;
+      $("hcrown-" + p).toggleAttribute("hidden", lead !== p);
+    });
     renderHistory();
   }
 
@@ -781,7 +938,7 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
     clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600);
   }
   function fx(p, delta, remote) {
-    const eat = $("eat-" + p);
+    const eat = mesaOn ? $("heat-" + p) : $("eat-" + p);
     eat.classList.remove("hop"); void eat.offsetWidth; eat.classList.add("hop");
     if (delta > 0) {
       const f = document.createElement("span"); f.className = "plus-fx"; f.textContent = "+" + delta;
@@ -812,6 +969,7 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
 
   /* ---------- sumar / restar ---------- */
   function change(p, delta) {
+    if (!canEdit(p)) { if (!me) toast("Primero elegí quién sos en este celular."); return; }
     const next = Math.max(0, state[p] + delta);
     if (next === state[p]) return;
     state[p] = next;
@@ -903,23 +1061,81 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
   P.forEach((p) => {
     $("eat-" + p).addEventListener("click", () => change(p, 1));
     $("plus-" + p).addEventListener("click", () => change(p, 1));
-    $("plus5-" + p).addEventListener("click", () => change(p, 5));
     $("minus-" + p).addEventListener("click", () => change(p, -1));
-    $("name-" + p).addEventListener("click", () => editName(p));
+    $("name-" + p).addEventListener("click", () => { if (canEdit(p)) editName(p); else toast(me ? "El nombre lo cambia " + nm(p) + " desde su celular." : "Primero elegí quién sos en este celular."); });
   });
   $("endBtn").onclick = showConfirm;
+
+  function renderMe() {
+    const t = $("soyTxt"); t.textContent = "";
+    $("soy").classList.toggle("elegir", !me);
+    $("soyBtns").hidden = !!me;
+    $("soyChange").hidden = !me;
+    if (!me) { t.textContent = "¿Quién sos en este celular?"; return; }
+    if (me === "both") { t.textContent = "En este celular anotan los dos"; return; }
+    const b = document.createElement("b"); b.className = me === "chanti" ? "ca" : "cb"; b.textContent = nm(me);
+    t.append(document.createTextNode("En este celular sos "), b);
+  }
+  function setMe(p) {
+    me = p;
+    try { if (p) localStorage.setItem(LS_ME, p); else localStorage.removeItem(LS_ME); } catch (e) {}
+    renderMe(); render();
+  }
+  P.forEach((p) => $("soy-" + p).addEventListener("click", () => setMe(p)));
+  $("soy-both").addEventListener("click", () => setMe("both"));
+  $("soyChange").addEventListener("click", () => setMe(null));
+
+  /* ---------- modo mesa ---------- */
+  let wake = null, armT = null;
+  P.forEach((p) => {
+    // misma ilustración que la tarjeta, delante del número
+    const art = $("eat-" + p).querySelector("svg").cloneNode(true);
+    $("heat-" + p).insertBefore(art, $("heat-" + p).firstChild);
+    $("heat-" + p).addEventListener("click", () => change(p, 1));
+    $("hminus-" + p).addEventListener("click", () => change(p, -1));
+  });
+  async function keepAwake() {
+    try { if (navigator.wakeLock && document.visibilityState === "visible") wake = await navigator.wakeLock.request("screen"); } catch (e) { wake = null; }
+  }
+  function openMesa() {
+    mesaOn = true; $("mesa").hidden = false; document.body.classList.add("in-mesa");
+    keepAwake(); render(); $("heat-chanti").focus();
+    try { localStorage.setItem("sushi-mesa", "1"); } catch (e) {}
+  }
+  function closeMesa() {
+    mesaOn = false; $("mesa").hidden = true; document.body.classList.remove("in-mesa");
+    try { wake && wake.release(); } catch (e) {} wake = null;
+    disarm(); render(); $("mesaBtn").focus();
+    try { localStorage.removeItem("sushi-mesa"); } catch (e) {}
+  }
+  function disarm() { clearTimeout(armT); const b = $("mesaEnd"); b.classList.remove("armed"); b.textContent = "Terminar"; }
+  $("mesaBtn").addEventListener("click", openMesa);
+  $("mesaExit").addEventListener("click", closeMesa);
+  $("mesaEnd").addEventListener("click", () => {
+    const b = $("mesaEnd");
+    if (state.chanti + state.more === 0) { toast("Todavía no comieron nada."); return; }
+    if (!b.classList.contains("armed")) {
+      b.classList.add("armed"); b.textContent = "¿Guardar?";
+      armT = setTimeout(disarm, 3500); return;
+    }
+    disarm(); endRound();
+  });
+  document.addEventListener("keydown", (e) => { if (mesaOn && e.key === "Escape") closeMesa(); });
+  document.addEventListener("visibilitychange", () => { if (mesaOn && document.visibilityState === "visible") keepAwake(); });
+  try { if (localStorage.getItem("sushi-mesa") === "1") setTimeout(openMesa, 0); } catch (e) {}
 
   function setStatus(s, txt) { $("status").dataset.s = s; $("statusTxt").textContent = txt; }
 
   /* ---------- arranque ---------- */
   paintSound();
+  renderMe();
   loadLocal();
   renderNames();
   render();
 
   function goLocal() {
     mode = "local";
-    setStatus("local", "Guardado en este dispositivo");
+    setStatus("local", "Guardado en este celu");
   }
 
   async function start() {
@@ -928,7 +1144,7 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
     mode = "live";
     state.chanti = 0; state.more = 0; state.rounds = []; state.names = { ...DEFAULT_NAMES };
     renderNames(); render();
-    $("foot").textContent = "Se sincroniza en vivo: lo que suma uno lo ve el otro al instante. Tocá un nombre para cambiarlo.";
+    $("foot").textContent = "Se sincroniza en vivo: cada uno suma su sushi y el otro lo ve al instante. Tocá tu nombre para cambiarlo.";
 
     let fresh = false;
     const t = setTimeout(() => { if (!fresh) setStatus("warn", "Sin señal, puede estar desactualizado"); }, 10000);
@@ -965,5 +1181,7 @@ footer { text-align: center; font-size: 12.5px; color: var(--muted); }
   }
 })();
 </script>
-</body>
+
+
+</body></html></body>
 </html>

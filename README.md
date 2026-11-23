@@ -4,7 +4,9 @@
 
 ## Cómo se usa
 
-- **Tocá el sushi** (o **+1**) para sumar una pieza. **+5** suma cinco de una y **−1** corrige un toque de más.
+- Al abrirla, elegí **quién sos en este celular**: cada uno suma solo su sushi. Si usan **un solo celu**, elegí **Los dos**.
+- **Modo mesa:** apoyan el celu en el medio de la mesa, la pantalla se divide en dos y cada uno anota de su lado (la mitad de arriba queda dada vuelta para el que está enfrente).
+- **Tocá el sushi** (o **+1 sushi**) para sumar una pieza. **− quitar uno** corrige un toque de más.
 - **Tocá un nombre** para cambiarlo por el tuyo.
 - Arriba ves quién va ganando y por cuántas piezas.
 - Cuando terminen de comer, tocá **Terminar y guardar**: la ronda queda anotada en **La cuenta** con la fecha, y los platos vuelven a cero.
